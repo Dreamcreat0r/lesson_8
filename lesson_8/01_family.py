@@ -48,9 +48,10 @@ class House:
         self.food = 50 # начальная еда в холодильнике
         self.money = 100 # начальные деньги
         self.dirt = 0 # начальная загрязненность дома
+        self.cat_food = 30 # начальная еда для кота
 
     def __str__(self): # выводим информацию о доме
-        print('{} еды в холодильнике, {} денег в тумбочке, {} степень загрязненности дома\n'.format(self.food, self.money, self.dirt))
+        print('{} еды в холодильнике, {} кошачьей еды, {} денег в тумбочке, {} степень загрязненности дома\n'.format(self.food, self.cat_food, self.money, self.dirt))
 
     def act(self):
         self.dirt += 5
@@ -72,88 +73,88 @@ class Human:
         self.__str__()
         self.satiety -= 10     # снимаем сытость за каждый ход
     
-        if self.satiety <= 0:    # проверка на смерть от голода
-            return 'Death'
-
-        if self.happiness < 10:    # проверка на смерть от депрессии
-            return 'Death'
-
-        if self.satiety <= 10:    # проверяем себя на голод
-            if self.eat() == 'done':
-                print(self.name, ', покушал(а)\n') # сообщение о совершенном действии
-                return   # съедаем очко действия
-
         if self.house.dirt >= 90:   # если дом грязный - настроение падает
             self.happiness -= 10
 
+        if self.satiety <= 10:    # проверяем себя на голод
+            if self.satiety <= 0:  # проверка на смерть от голода
+                return 'Death'
+            elif self.eat() == 'done':  # пытаемся кушать
+                return   # съедаем очко действия
+
+        if self.happiness <= 20:    # проверка на смерть от депрессии
+            if self.happiness <= 10:
+                return 'Death'
+            if 80 <= self.happiness < 100:
+                self.pet_cat
 
     def eat(self):
         if self.house.food >= 30: # если есть покушать досыта
             self.house.food -= 40
             self.satiety += 40
+            print(self.name, ', покушал(а)\n') # сообщение о совершенном действии
             return 'done'
         elif self.house.food > 0: # если есть покушать частично
             self.satiety += self.house.food
             self.house.food = 0
+            print(self.name, ', покушал(а)\n') # сообщение о совершенном действии
             return 'done'
         else: # если еды нет совсем
             print('Еды нет!')   # сигналим если еды нет
 
+    def pet_cat(self):   # погладил кота
+        self.happiness += 5
+        print(self.name, ' погладил(а) кота')
+
 
 class Husband(Human):
 
-    def __init__(self, name, house):
-        super().__init__(name=name, house=house)
+    #def __init__(self, name, house):
+    #    super().__init__(name=name, house=house)
 
-    def __str__(self):   # сообщение о характеристиках - ссылаемся на метод материнского класса
-        super().__str__()
+    #def __str__(self):   # сообщение о характеристиках - ссылаемся на метод материнского класса
+    #    super().__str__()
 
     def act(self):   # дополняем движковый модуль материнского класса
         super().act()
         if self.happiness <  20:   # если накатил депрессон от того, что жена не убирается в доме - поиграем в танки
             self.play()
-            print(self.name, ' поиграл\n') # сообщение о совершенном действии
             return # съедаем очко действия
         
         self.work()   # если очко действия еще не потрачено на покушац или на поигр...то есть, на восстановление морали, то идем на работу
-        print(self.name, ' поработал\n') # сообщение о совершенном действии
-
-    def eat(self):    # ссылаемся на модуль материнского класса
-        super().eat()
 
     def work(self):   # никидываем 150 голды в кошелек
         self.house.money += 150
+        print(self.name, ' поработал\n') # сообщение о совершенном действии
 
     def play(self):   # +10 морали
         self.happiness += 20
-        
+        print(self.name, ' поиграл\n') # сообщение о совершенном действии
 
 
 class Wife(Human):
 
-    def __init__(self, name, house):
-        super().__init__(name=name, house=house)
+    #def __init__(self, name, house):
+    #    super().__init__(name=name, house=house)
 
-    def __str__(self):   # сообщение о характеристиках - ссылаемся на метод материнского класса
-        super().__str__()
+    #def __str__(self):   # сообщение о характеристиках - ссылаемся на метод материнского класса
+    #    super().__str__()
 
     def act(self):  # дополняем движковый модуль материнского класса
         super().act()
         if self.happiness < 20:   # если накатил депрессон от того, что сама не убирается в доме - купим шубу
             if self.buy_fur_coat() == 'done':   
-                print(self.name, ' купила шубу\n') # сообщение о совершенном действии
                 return  # съедаем очко действия
 
         if self.house.food < 60:  # если нечего кушац - идем в магазин
             if self.buy_food() == 'done':
-                print(self.name, ' купила еды\n') # сообщение о совершенном действии
+                return  # съедаем очко действия
+
+        if self.house.cat_food < 40:  # если коту нечего кушац - идем в магазин
+            if self.buy_cat_food() == 'done':
                 return  # съедаем очко действия
 
         self.clean_house()    # если очко действия еще не потрачено на покушац/купить шубу/сходить в магазин, то убираемся в доме
-        print(self.name, ' убралась в доме\n') # сообщение о совершенном действии
-
-    def eat(self):
-        super().eat()
 
     def buy_food(self):
         if self.house.money > 150:   # проверяем, есть ли деньги на еду (по максимуму)
@@ -164,6 +165,20 @@ class Wife(Human):
         elif self.house.money > 0:   # проверяем, есть ли деньги на еду (частично)
             self.house.food += self.house.money
             print('{} купила {} еды'.format(self.name, self.house.money))   # отчет о купленной еде
+            self.house.money = 0
+            return 'done'
+        else:
+            print('Денег на еду НЕТ!')   # сигналим, если денег нет вообще
+
+    def buy_cat_food(self):
+        if self.house.money > 100:   # проверяем, есть ли деньги на еду для кота (по максимуму)
+            self.house.cat_food += 100
+            self.house.money -= 100
+            print('{} купила 100 кошачьей еды'.format(self.name))   # отчет о купленной еде для кота
+            return 'done'
+        elif self.house.money > 0:   # проверяем, есть ли деньги на еду для кота(частично)
+            self.house.cat_food += self.house.money
+            print('{} купила {} кошачьей еды'.format(self.name, self.house.money))   # отчет о купленной еде для кота
             self.house.money = 0
             return 'done'
         else:
@@ -181,44 +196,12 @@ class Wife(Human):
 
     def clean_house(self):
         self.house.dirt = 0
-
-
-home = House()
-serge = Husband(name='Сережа', house = home)
-masha = Wife(name='Маша', house = home)
-
-for day in range(365):
-    print('================================== День {} =================================='.format(day+1))
-    home.act()
-    if serge.act() == 'Death':
-        break
-    if masha.act() == 'Death':
-        break
-    print('В конце хода: ')
-    home.__str__()
-    serge.__str__()
-    masha.__str__()
-    print('\n')
-
-
-
-
-
-
-
-
-
-
-
-
+        print(self.name, ' убралась в доме\n') # сообщение о совершенном действии
 
 
 # Можно будет потом преобразовать всю эту ботву в схему через очки приоритета. 
 # Типа покушать и восстановить мораль - нулевой приоритет, купить еды если ее нет вообще - первый, 
 # убраться в доме если он грязный - второй, купить еды, если ее 100+ - третий и т.д.
-
-
-
 
 
 
@@ -249,22 +232,75 @@ for day in range(365):
 # Если кот дерет обои, то грязи становится больше на 5 пунктов
 
 
-#class Cat:
+class Cat:
 
-#    def __init__(self):
-#        pass
+    def __init__(self, name, house):
+        self.name = name
+        self.satiety = 30     
+        self.house = house
 
-#    def act(self):
-#        pass
+    def __str__(self):
+        print('{}:     {} сытость'.format(self.name, self.satiety)) # вывод статов конкретного кота
 
-#    def eat(self):
-#        pass
+    def act(self):
+        self.__str__()
 
-#    def sleep(self):
-#        pass
+        if self.satiety < 20:   # проверяем кота на голод
+            if self.satiety <= 0:   # проверяем кота на смерть от голода
+                return 'Death'
+            if self.eat() == 'done':   # пробуем кушац
+                return   # съедаем очко действия
 
-#    def soil(self):
-#        pass
+
+        if randint(0,1) == 0:   # случайным образом выбираем, спать или драть ковер
+            self.sleep()
+        else:
+            self.ruin_carpet()
+
+    def eat(self):
+        if self.house.cat_food >= 10:   # еды много - кушаем от пуза
+            self.satiety += 20
+            self.house.cat_food -= 10
+            print(self.name, 'поел\n')
+            return 'done'
+        if self.house.cat_food > 0:   # еды немного - кушаем сколько есть
+            self.satiety += self.house.pet_food*2
+            self.house.cat_food -= 10
+            print(self.name, 'поел\n')
+            return 'done'
+        else:   # еды нет - начинаем орать
+            print('Кошачьей еды нет!')   
+
+    def sleep(self):   # во время сна голод снижается не сильно
+        self.satiety -= 5
+        print(self.name, 'поспал\n')
+
+    def ruin_carpet(self):   # дерем ковер, повышается голод и грязь в доме
+        self.satiety -= 10   # забавно, что для кота при жтом плюсов нет)) прям как в жизни
+        self.house.dirt += 5
+        print(self.name, 'подрал ковер\n')   # надо будет потом добавить функцию покупки нового ковра
+
+
+home = House()
+serge = Husband(name='Сережа', house = home)
+masha = Wife(name='Маша', house = home)
+murlo = Cat(name='Мурзик', house = home)
+
+for day in range(365):
+    print('========================================== День {} =========================================='.format(day+1))
+    home.act()
+    if serge.act() == 'Death':
+        break
+    if masha.act() == 'Death':
+        break
+    if murlo.act() == 'Death':
+        break
+    print('|||||||||||||||||||||||||||||||||||||||||В конце хода:||||||||||||||||||||||||||||||||||||||||')
+    home.__str__()
+    serge.__str__()
+    masha.__str__()
+    murlo.__str__()
+    print('\n')
 
 
 ######################################################## Часть вторая бис
