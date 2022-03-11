@@ -314,22 +314,22 @@ for day in range(365):
 # отличия от взрослых - кушает максимум 10 единиц еды,
 # степень счастья  - не меняется, всегда ==100 ;)
 
-#class Child:
+class Child:
 
-#    def __init__(self):
-#        pass
+    def __init__(self):
+        pass
 
-#    def __str__(self):
-#        return super().__str__()
+    def __str__(self):
+        return super().__str__()
 
-#    def act(self):
-#        pass
+    def act(self):
+        pass
 
-#    def eat(self):
-#        pass
+    def eat(self):
+        pass
 
-#    def sleep(self):
-#        pass
+    def sleep(self):
+        pass
 
 
 # TODO после реализации второй части - отдать на проверку учителем две ветки
