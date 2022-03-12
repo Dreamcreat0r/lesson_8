@@ -358,6 +358,9 @@ home = House()
 serge = Husband(name='Сережа', house = home)
 masha = Wife(name='Маша', house = home)
 murlo = Cat(name='Мурзик', house = home)
+rizhiy = Cat(name='Рыжик', house = home)
+basik = Cat(name='Барсик-который-срет-мимо', house = home)
+nigga = Cat(name='Черныш', house = home)
 spinogriz = Child(name= 'Миша', house = home)
 
 for day in range(365):
@@ -372,6 +375,15 @@ for day in range(365):
     murlo.act()
     if murlo.action_point == -1:
         break
+    rizhiy.act()
+    if rizhiy.action_point == -1:
+        break
+    basik.act()
+    if basik.action_point == -1:
+        break
+    nigga.act()
+    if nigga.action_point == -1:
+        break
     spinogriz.act()
     if spinogriz.action_point == -1:
         break
@@ -380,6 +392,9 @@ for day in range(365):
     serge.__str__()
     masha.__str__()
     murlo.__str__()
+    rizhiy.__str__()
+    basik.__str__()
+    nigga.__str__()
     spinogriz.__str__()
     print('\n')
 
