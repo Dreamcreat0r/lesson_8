@@ -153,10 +153,10 @@ class Wife(Human):
         if self.happiness < 20 and self.action_point == 1:   # если накатил депрессон от того, что сама не убирается в доме - купим шубу
             self.buy_fur_coat()
 
-        if self.house.food < 60 and self.action_point == 1:  # если нечего кушац - идем в магазин
+        if self.house.food < 200 and self.action_point == 1:  # если нечего кушац - идем в магазин
             self.buy_food()
 
-        if self.house.cat_food < 40 and self.action_point == 1:  # если коту нечего кушац - идем в магазин
+        if self.house.cat_food < 50 and self.action_point == 1:  # если коту нечего кушац - идем в магазин
             self.buy_cat_food()
 
         if self.action_point == 1:
@@ -319,7 +319,7 @@ class Child(Human):
     #def __str__(self):
     #    super().__str__()
 
-    def act(self):
+    def act(self):  # движковый модуль тут свой, материнский не трогаем
         self.__str__()
         self.action_point = 1 # восстанавливаем очко действия в начале хода
 
@@ -332,7 +332,7 @@ class Child(Human):
         if self.action_point == 1:
             self.sleep()
 
-    def eat(self):
+    def eat(self):  # и модуль покушать тут свой
         if self.house.food >= 10: # если есть покушать досыта
             self.house.food -= 10
             self.satiety += 10
