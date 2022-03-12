@@ -45,8 +45,8 @@ from random import randint
 class House:
 
     def __init__(self):
-        self.food = 50 # начальная еда в холодильнике
-        self.money = 100 # начальные деньги
+        self.food = 100 # начальная еда в холодильнике
+        self.money = 500 # начальные деньги
         self.dirt = 0 # начальная загрязненность дома
         self.cat_food = 30 # начальная еда для кота
 
@@ -67,6 +67,7 @@ class Human:
         self.house = house
         self.name = name
         self.action_point = 0
+        self.catplays_count = 0
 
     def __str__(self):
         print('{}:     {} сытость,     {} счастье'.format(self.name, self.satiety, self.happiness)) # вывод статов конкретного чела
@@ -87,8 +88,6 @@ class Human:
         if self.happiness <= 20:    # проверка на смерть от депрессии и на наличие очка действия
             if self.happiness <= 10:
                 self.action_point = -1
-            if 80 <= self.happiness < 100 and self.action_point == 1:  # если депрессон совсем легкий - гладим кота
-                self.pet_cat
 
     def eat(self):
         if self.house.food >= 30: # если есть покушать досыта
@@ -108,13 +107,16 @@ class Human:
         self.happiness += 5
         self.satiety -= 10   # снимаем сытость
         self.action_point = 0 # съедаем очко действия
+        self.catplays_count += 1
         print(self.name, ' погладил(а) кота')
 
 
 class Husband(Human):
 
-    #def __init__(self, name, house):
-    #    super().__init__(name=name, house=house)
+    def __init__(self, name, house):
+        super().__init__(name=name, house=house)
+        self.plays_count = 0
+        self.worksdays_count = 0
 
     #def __str__(self):   # сообщение о характеристиках - ссылаемся на метод материнского класса
     #    super().__str__()
@@ -122,46 +124,60 @@ class Husband(Human):
     def act(self):   # дополняем движковый модуль материнского класса
         super().act()
 
-        if self.happiness <  20 and self.action_point == 1:   # если накатил депрессон от того, что жена не убирается в доме - поиграем в танки
+        if self.happiness <=  40 and self.action_point == 1:   # если накатил депрессон от того, что жена не убирается в доме - поиграем в танки
             self.play()
-        
+
+        if self.happiness < 70 and self.action_point == 1 and self.house.money > 800:
+            self.pet_cat()
+    
         if self.action_point == 1:
             self.work()   # если очко действия еще не потрачено на покушац или на поигр...то есть, на восстановление морали, то идем на работу
 
         return self.action_point
 
     def play(self):   # +10 морали
-        self.happiness += 20
+        self.happiness += 30
         self.satiety -= 10     # снимаем сытость
         self.action_point = 0  # съедаем очко действия
+        self.plays_count += 1
         print(self.name, ' поиграл\n') # сообщение о совершенном действии
 
     def work(self):   # никидываем 150 голды в кошелек
-        self.house.money += 150
+        self.house.money += 170
         self.satiety -= 10     # снимаем сытость
         self.action_point = 0  # съедаем очко действия
+        self.worksdays_count += 1
         print(self.name, ' поработал\n') # сообщение о совершенном действии
     # несмотря на то, что это последнее возможное действие, все равно съедаем ОД на случай перестановки действий в движке
 
 
 class Wife(Human):
 
-    #def __init__(self, name, house):
-    #    super().__init__(name=name, house=house)
+    def __init__(self, name, house):
+        super().__init__(name=name, house=house)
+        self.bags_count = 0
+        self.maiden_calls = 0
+        self.clean_count = 0
 
     #def __str__(self):   # сообщение о характеристиках - ссылаемся на метод материнского класса
     #    super().__str__()
 
     def act(self):  # дополняем движковый модуль материнского класса
         super().act()
-        if self.happiness < 20 and self.action_point == 1:   # если накатил депрессон от того, что сама не убирается в доме - купим шубу
-            self.buy_fur_coat()
+        if self.happiness < 40 and self.action_point == 1:   # если накатил депрессон от того, что сама не убирается в доме - купим сумку
+                self.buy_new_bag()
 
-        if self.house.food < 200 and self.action_point == 1:  # если нечего кушац - идем в магазин
+        if self.house.food < 150 and self.action_point == 1:  # если нечего кушац - идем в магазин
             self.buy_food()
 
-        if self.house.cat_food < 50 and self.action_point == 1:  # если коту нечего кушац - идем в магазин
+        if self.house.cat_food < 100 and self.action_point == 1:  # если коту нечего кушац - идем в магазин
             self.buy_cat_food()
+
+        if self.house.dirt > 100:
+            self.call_maiden()
+
+        if self.happiness < 70 and self.house.dirt <= 50:
+            self.pet_cat()
 
         if self.action_point == 1:
             self.clean_house()    # если очко действия еще не потрачено на покушац/купить шубу/сходить в магазин, то убираемся в доме
@@ -201,20 +217,31 @@ class Wife(Human):
             print('Денег на еду для кота НЕТ!')   # сигналим, если денег нет вообще
         
 
-    def buy_fur_coat(self):
-        if self.house.money >= 450:   # проверяем, достаточно ли денег
-            self.house.money = 0
+    def buy_new_bag(self):
+        if self.house.money >= 550:   # проверяем, достаточно ли денег
+            self.house.money -= 550
             self.happiness += 60
             self.satiety -= 10     # снимаем сытость
             self.action_point = 0  # съедаем очко действия
-            print(self.name, ', купила шубу\n')
+            self.bags_count += 1
+            print(self.name, ', купила сумку\n')
         else:
-            print('Нет денег на шубу!')    # сигналим, если нет
+            print('Нет денег на сумку!')    # сигналим, если нет
+
+    def call_maiden(self):
+        if self.house.money >= 450:
+            self.house.money -= 350
+            self.house.dirt = 0
+            self.satiety -= 10
+            self.action_point = 0
+            self.maiden_calls += 1
+            print(self.name, ' вызвала уборщицу')
 
     def clean_house(self):
-        self.house.dirt = 0
+        self.house.dirt -= 10
         self.satiety -= 10     # снимаем сытость
         self.action_point = 0  # съедаем очко действия
+        self.clean_count += 1
         print(self.name, ' убралась в доме\n') # сообщение о совершенном действии
     # несмотря на то, что это последнее возможное действие, все равно съедаем ОД на случай перестановки действий в движке
 
@@ -400,6 +427,10 @@ for day in range(365):
     nigga.__str__()
     spinogriz.__str__()
     print('\n')
+    print('{} играл {} раз, гладил кота {} раз, сходил на работу {} раз'.format
+          (serge.name, serge.plays_count, serge.catplays_count, serge.worksdays_count))
+    print('{} купила {} сумок, гладила кота {} раз, вызвала уборщицу {} раз, убралась сама {} раз'.format
+          (masha.name, masha.bags_count, masha.catplays_count, masha.maiden_calls, masha.clean_count))
 
 
 # TODO после реализации второй части - отдать на проверку учителем две ветки
