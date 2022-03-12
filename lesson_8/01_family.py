@@ -285,6 +285,9 @@ home = House()
 serge = Husband(name='Сережа', house = home)
 masha = Wife(name='Маша', house = home)
 murlo = Cat(name='Мурзик', house = home)
+basik = Cat(name= 'Барсик-который-срет-мимо', house = home)
+rizhiy = Cat(name='Рыжик', house = home)
+nigga = Cat(name= 'Черныш', house = home)
 
 for day in range(365):
     print('========================================== День {} =========================================='.format(day+1))
@@ -295,11 +298,20 @@ for day in range(365):
         break
     if murlo.act() == 'Death':
         break
+    if basik.act() == 'Death':
+        break
+    if rizhiy.act() == 'Death':
+        break
+    if nigga.act() == 'Death':
+        break
     print('|||||||||||||||||||||||||||||||||||||||||В конце хода:||||||||||||||||||||||||||||||||||||||||')
     home.__str__()
     serge.__str__()
     masha.__str__()
     murlo.__str__()
+    basik.__str__()
+    rizhiy.__str__()
+    nigga.__str__()
     print('\n')
 
 
