@@ -51,7 +51,8 @@ class House:
         self.cat_food = 30 # начальная еда для кота
 
     def __str__(self): # выводим информацию о доме
-        print('{} еды в холодильнике, {} кошачьей еды, {} денег в тумбочке, {} степень загрязненности дома\n'.format(self.food, self.cat_food, self.money, self.dirt))
+        print('{} еды в холодильнике, {} кошачьей еды, {} денег в тумбочке, {} степень загрязненности дома\n'.format
+              (self.food, self.cat_food, self.money, self.dirt))
 
     def act(self):
         self.dirt += 5
@@ -80,12 +81,13 @@ class Human:
         if self.satiety <= 40:    # проверяем себя на голод
             if self.satiety <= 0:  # проверка на смерть от голода
                 self.action_point = -1
-            self.eat()  # пытаемся кушать
+            if self.action_point == 1:
+                self.eat()  # пытаемся кушать
                 
-        if self.happiness <= 20 and self.action_point == 1:    # проверка на смерть от депрессии и на наличие очка действия
+        if self.happiness <= 20:    # проверка на смерть от депрессии и на наличие очка действия
             if self.happiness <= 10:
                 self.action_point = -1
-            if 80 <= self.happiness < 100:  # если депрессон совсем легкий - гладим кота
+            if 80 <= self.happiness < 100 and self.action_point == 1:  # если депрессон совсем легкий - гладим кота
                 self.pet_cat
 
     def eat(self):
@@ -126,6 +128,8 @@ class Husband(Human):
         if self.action_point == 1:
             self.work()   # если очко действия еще не потрачено на покушац или на поигр...то есть, на восстановление морали, то идем на работу
 
+        return self.action_point
+
     def play(self):   # +10 морали
         self.happiness += 20
         self.satiety -= 10     # снимаем сытость
@@ -161,6 +165,8 @@ class Wife(Human):
 
         if self.action_point == 1:
             self.clean_house()    # если очко действия еще не потрачено на покушац/купить шубу/сходить в магазин, то убираемся в доме
+
+        return self.action_point
 
     def buy_food(self):
         if self.house.money > 150:   # проверяем, есть ли деньги на еду (по максимуму)
@@ -273,6 +279,8 @@ class Cat:
             else:
                 self.ruin_carpet()
 
+        return self.action_point
+
     def eat(self):
         if self.house.cat_food >= 10:   # еды много - кушаем от пуза
             self.satiety += 20
@@ -332,6 +340,8 @@ class Child(Human):
         if self.action_point == 1:
             self.sleep()
 
+        return self.action_point
+
     def eat(self):  # и модуль покушать тут свой
         if self.house.food >= 10: # если есть покушать досыта
             self.house.food -= 10
@@ -366,26 +376,19 @@ spinogriz = Child(name= 'Миша', house = home)
 for day in range(365):
     print('========================================== День {} =========================================='.format(day+1))
     home.act()
-    serge.act()
-    if serge.action_point == -1:
+    if serge.act() == -1:
         break
-    masha.act()
-    if masha.action_point == -1:
+    if masha.act() == -1:
         break
-    murlo.act()
-    if murlo.action_point == -1:
+    if murlo.act() == -1:
         break
-    rizhiy.act()
-    if rizhiy.action_point == -1:
+    if rizhiy.act() == -1:
         break
-    basik.act()
-    if basik.action_point == -1:
+    if basik.act() == -1:
         break
-    nigga.act()
-    if nigga.action_point == -1:
+    if nigga.act() == -1:
         break
-    spinogriz.act()
-    if spinogriz.action_point == -1:
+    if spinogriz.act() == -1:
         break
     print('|||||||||||||||||||||||||||||||||||||||||В конце хода:||||||||||||||||||||||||||||||||||||||||')
     home.__str__()
